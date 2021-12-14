@@ -10,4 +10,5 @@ import java.util.Set;
 public class DeveloperResponse {
     private String name;
     private Set<StoryResponse> stories;
+    private Set<BugResponse> bugs;
 }

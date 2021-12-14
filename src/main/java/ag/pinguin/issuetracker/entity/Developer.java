@@ -25,4 +25,8 @@ public class Developer implements Serializable {
             cascade = CascadeType.ALL)
     private Set<Story> stories;
 
+    @OneToMany(mappedBy = "developer", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<Bug> bugs;
+
 }
