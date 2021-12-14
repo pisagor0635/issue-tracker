@@ -1,6 +1,7 @@
 package ag.pinguin.issuetracker.service.impl;
 
 import ag.pinguin.issuetracker.entity.Developer;
+import ag.pinguin.issuetracker.exception.ResourceNotFoundException;
 import ag.pinguin.issuetracker.model.DeveloperRequest;
 import ag.pinguin.issuetracker.model.DeveloperResponse;
 import ag.pinguin.issuetracker.repository.DeveloperRepository;
@@ -9,6 +10,11 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DeveloperServiceImpl implements DeveloperService {
@@ -23,5 +29,25 @@ public class DeveloperServiceImpl implements DeveloperService {
         Developer developer = mapper.map(developerRequest, Developer.class);
 
         return mapper.map(developerRepository.save(developer), DeveloperResponse.class);
+    }
+
+    @Override
+    public List<DeveloperResponse> getDevelopers() {
+        List<DeveloperResponse> developerResponseList = new ArrayList<>();
+        developerRepository.findAll().forEach(d -> {
+            developerResponseList.add(mapper.map(d, DeveloperResponse.class));
+        });
+        return developerResponseList;
+    }
+
+    @Override
+    public Map<String, Boolean> remove(Long id) {
+
+        Developer developer = developerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Developer not exist with id : " + id));
+        developerRepository.delete(developer);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", true);
+        return response;
     }
 }
