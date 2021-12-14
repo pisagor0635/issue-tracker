@@ -11,5 +11,5 @@ public class BugResponse {
     private String description;
     private String status;
     private String priority;
-    private DeveloperResponseWithoutStory developer;
+    private DeveloperResponseWithoutStoriesAndBugs developer;
 }

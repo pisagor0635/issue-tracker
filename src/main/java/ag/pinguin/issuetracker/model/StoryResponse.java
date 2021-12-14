@@ -11,5 +11,5 @@ public class StoryResponse {
     private String description;
     private int storyPoint;
     private String status;
-    private DeveloperResponseWithoutStory developer;
+    private DeveloperResponseWithoutStoriesAndBugs developer;
 }

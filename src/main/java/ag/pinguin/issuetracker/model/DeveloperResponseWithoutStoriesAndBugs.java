@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DeveloperResponseWithoutStory {
+public class DeveloperResponseWithoutStoriesAndBugs {
     private String name;
 }
