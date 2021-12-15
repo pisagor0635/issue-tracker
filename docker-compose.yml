@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: issuetracker-db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
+
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    container_name: issuetracker-service
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
