@@ -31,12 +31,12 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public StoryResponse add(StoryRequest storyRequest) {
-        checkLimit(storyRequest);
+        checkMaxStoryLimitOfDeveloper(storyRequest);
         Story story = mapper.map(storyRequest, Story.class);
         return mapper.map(storyRepository.save(story), StoryResponse.class);
     }
 
-    private void checkLimit(StoryRequest storyRequest) {
+    private void checkMaxStoryLimitOfDeveloper(StoryRequest storyRequest) {
         long numberOfDevelopers = developerRepository.count();
         int currentStoryPoints = storyRepository.findAll().stream().filter(s -> (s.getFromDate()
                 .after(storyRequest.getSprintStartDate()) && s.getToDate()
@@ -56,41 +56,29 @@ public class StoryServiceImpl implements StoryService {
         storyRepository.findAll().forEach(s -> {
             storyResponseList.add(mapper.map(s, StoryResponse.class));
         });
-
         return storyResponseList;
     }
 
     @Override
     @Transactional
     public StoryResponse assignToDeveloper(Long storyId, Long developerId) {
-
-        checkDeveloperStoryLimit(storyId, developerId);
-
+        checkTotalStoryLimitAgainstNumberOfDevelopers(storyId, developerId);
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not exist with id : " + storyId));
-
         Developer developer = developerRepository.findById(developerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Developer not exist with id : " + developerId));
-
         story.setDeveloper(developer);
-
         return mapper.map(story, StoryResponse.class);
     }
 
-    private void checkDeveloperStoryLimit(Long storyId, Long developerId) {
-
+    private void checkTotalStoryLimitAgainstNumberOfDevelopers(Long storyId, Long developerId) {
         long sum = storyRepository.findAll().stream().filter(f -> f.getDeveloper() != null
                 && f.getDeveloper().getId() == developerId).mapToInt(s -> s.getStoryPoint()).sum();
-
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not exist with id : " + storyId));
-
         if (sum + story.getStoryPoint() > 10) {
-
             throw new WorkOverflowOnSprintPeriodException("Current sum of story points of a user is : "
                     + sum + " . Available story points: " + (10 - sum));
         }
-
-
     }
 }
