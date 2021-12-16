@@ -2,6 +2,7 @@ package ag.pinguin.issuetracker.service.impl;
 
 import ag.pinguin.issuetracker.entity.Developer;
 import ag.pinguin.issuetracker.entity.Story;
+import ag.pinguin.issuetracker.exception.DuplicateEntryException;
 import ag.pinguin.issuetracker.exception.ResourceNotFoundException;
 import ag.pinguin.issuetracker.exception.WorkOverflowOnSprintPeriodException;
 import ag.pinguin.issuetracker.model.StoryRequest;
@@ -12,6 +13,7 @@ import ag.pinguin.issuetracker.service.StoryService;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,9 +33,16 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public StoryResponse add(StoryRequest storyRequest) {
+        StoryResponse storyResponse = new StoryResponse();
         checkMaxStoryLimitOfDeveloper(storyRequest);
         Story story = mapper.map(storyRequest, Story.class);
-        return mapper.map(storyRepository.save(story), StoryResponse.class);
+        try {
+            storyResponse = mapper.map(storyRepository.save(story), StoryResponse.class);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DuplicateEntryException("Story with this issue id already exists");
+
+        }
+        return storyResponse;
     }
 
     private void checkMaxStoryLimitOfDeveloper(StoryRequest storyRequest) {
