@@ -62,9 +62,8 @@ public class StoryServiceImpl implements StoryService {
     public List<StoryResponse> getStories() {
 
         List<StoryResponse> storyResponseList = new ArrayList<>();
-        storyRepository.findAll().forEach(s -> {
-            storyResponseList.add(mapper.map(s, StoryResponse.class));
-        });
+        storyRepository.findAll().forEach(s ->
+                storyResponseList.add(mapper.map(s, StoryResponse.class)));
         return storyResponseList;
     }
 

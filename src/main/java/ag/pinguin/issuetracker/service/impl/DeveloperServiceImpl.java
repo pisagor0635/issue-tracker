@@ -34,9 +34,8 @@ public class DeveloperServiceImpl implements DeveloperService {
     @Override
     public List<DeveloperResponse> getDevelopers() {
         List<DeveloperResponse> developerResponseList = new ArrayList<>();
-        developerRepository.findAll().forEach(d -> {
-            developerResponseList.add(mapper.map(d, DeveloperResponse.class));
-        });
+        developerRepository.findAll().forEach(d ->
+                developerResponseList.add(mapper.map(d, DeveloperResponse.class)));
         return developerResponseList;
     }
 

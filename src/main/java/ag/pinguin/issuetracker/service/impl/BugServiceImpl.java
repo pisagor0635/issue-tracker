@@ -36,7 +36,7 @@ public class BugServiceImpl implements BugService {
         Bug bug = mapper.map(bugRequest, Bug.class);
 
         try {
-            bugResponse = mapper.map(bug = bugRepository.save(bug), BugResponse.class);
+            bugResponse = mapper.map(bugRepository.save(bug), BugResponse.class);
         } catch (DataIntegrityViolationException ex) {
             throw new DuplicateEntryException("Bug with this issue id already exists");
         }
@@ -46,9 +46,9 @@ public class BugServiceImpl implements BugService {
     @Override
     public List<BugResponse> getBugs() {
         List<BugResponse> bugResponseList = new ArrayList<>();
-        bugRepository.findAll().forEach(b -> {
-            bugResponseList.add(mapper.map(b, BugResponse.class));
-        });
+        bugRepository.findAll().forEach(b ->
+                bugResponseList.add(mapper.map(b, BugResponse.class))
+        );
         return bugResponseList;
     }
 
