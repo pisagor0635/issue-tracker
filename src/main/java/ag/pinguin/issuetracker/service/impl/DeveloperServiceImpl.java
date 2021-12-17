@@ -8,7 +8,6 @@ import ag.pinguin.issuetracker.repository.DeveloperRepository;
 import ag.pinguin.issuetracker.service.DeveloperService;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,14 +19,15 @@ import java.util.Map;
 public class DeveloperServiceImpl implements DeveloperService {
     private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
-    @Autowired
     private DeveloperRepository developerRepository;
+
+    public DeveloperServiceImpl(DeveloperRepository developerRepository) {
+        this.developerRepository = developerRepository;
+    }
 
     @Override
     public DeveloperResponse add(DeveloperRequest developerRequest) {
-
         Developer developer = mapper.map(developerRequest, Developer.class);
-
         return mapper.map(developerRepository.save(developer), DeveloperResponse.class);
     }
 
@@ -48,5 +48,9 @@ public class DeveloperServiceImpl implements DeveloperService {
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", true);
         return response;
+    }
+
+    public void setDeveloperRepository(DeveloperRepository developerRepository) {
+        this.developerRepository = developerRepository;
     }
 }
