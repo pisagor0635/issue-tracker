@@ -34,12 +34,12 @@ public class StoryServiceImpl implements StoryService {
 
     private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
-    @Value("max_story_point_per_developer_for_sprint_period")
+    @Value("${max_story_point_per_developer_for_sprint_period}")
     private int maxWorkloadPerDeveloper;
 
     @Override
     public StoryResponse add(StoryRequest storyRequest) {
-        StoryResponse storyResponse = new StoryResponse();
+        StoryResponse storyResponse;
         checkMaxStoryLimitOfDeveloper(storyRequest);
         Story story = mapper.map(storyRequest, Story.class);
         try {
