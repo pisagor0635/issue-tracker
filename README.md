@@ -50,8 +50,8 @@ add bug:
 
 assign bug to developer :
 {
-  "bugId":2,
-  "developerId":2
+  "bugId":1,
+  "developerId":1
 }
 
 
