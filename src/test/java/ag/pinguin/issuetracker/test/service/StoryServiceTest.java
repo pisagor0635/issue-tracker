@@ -32,7 +32,6 @@ public class StoryServiceTest {
 
         Assertions.assertEquals("Number of Developer : 2 Available story points : 4", exception.getMessage());
 
-
     }
 
     @Test
