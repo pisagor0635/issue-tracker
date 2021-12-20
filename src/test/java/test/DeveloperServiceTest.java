@@ -38,16 +38,13 @@ public class DeveloperServiceTest {
     }
 
     @Test
-    public void testRemove() {
+    public void testRemoveNonExistingDeveloper() {
 
         Long nonExistingDeveloperId = -1L;
 
         ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class, () -> developerService.remove(nonExistingDeveloperId));
 
-        Assertions.assertEquals("Developer not exist with id:" + nonExistingDeveloperId, exception.getMessage());
-
-        System.out.println("");
-
+        Assertions.assertEquals("Developer not exist with id : " + nonExistingDeveloperId, exception.getMessage());
 
     }
 

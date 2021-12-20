@@ -8,6 +8,7 @@ import ag.pinguin.issuetracker.repository.DeveloperRepository;
 import ag.pinguin.issuetracker.service.DeveloperService;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,14 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class DeveloperServiceImpl implements DeveloperService {
     private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
-    private DeveloperRepository developerRepository;
-
-    public DeveloperServiceImpl(DeveloperRepository developerRepository) {
-        this.developerRepository = developerRepository;
-    }
+    private final DeveloperRepository developerRepository;
 
     @Override
     public DeveloperResponse add(DeveloperRequest developerRequest) {
@@ -50,7 +48,4 @@ public class DeveloperServiceImpl implements DeveloperService {
         return response;
     }
 
-    public void setDeveloperRepository(DeveloperRepository developerRepository) {
-        this.developerRepository = developerRepository;
-    }
 }

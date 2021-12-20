@@ -11,7 +11,7 @@ import ag.pinguin.issuetracker.repository.DeveloperRepository;
 import ag.pinguin.issuetracker.service.BugService;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BugServiceImpl implements BugService {
 
-    @Autowired
-    private BugRepository bugRepository;
+    private final BugRepository bugRepository;
 
-    @Autowired
-    private DeveloperRepository developerRepository;
+    private final DeveloperRepository developerRepository;
 
     private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
