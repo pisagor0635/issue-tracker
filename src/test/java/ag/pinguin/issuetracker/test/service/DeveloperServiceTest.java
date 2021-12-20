@@ -6,9 +6,11 @@ import ag.pinguin.issuetracker.service.DeveloperService;
 import ag.pinguin.issuetracker.service.impl.DeveloperServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+@DisplayName("Test of developer services")
 public class DeveloperServiceTest {
 
     private DeveloperService developerService;
@@ -23,6 +25,7 @@ public class DeveloperServiceTest {
     }
 
     @Test
+    @DisplayName("Try to remove non-existing developer give expected exception")
     public void testRemoveNonExistingDeveloper() {
 
         Long nonExistingDeveloperId = -1L;

@@ -13,6 +13,8 @@ import ag.pinguin.issuetracker.service.StoryService;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,12 @@ public class StoryServiceImpl implements StoryService {
 
     private final DeveloperRepository developerRepository;
 
+    private final Environment env;
+
     private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+
+    @Value("max_story_point_per_developer_for_sprint_period")
+    private int maxWorkloadPerDeveloper;
 
     @Override
     public StoryResponse add(StoryRequest storyRequest) {
@@ -44,12 +51,15 @@ public class StoryServiceImpl implements StoryService {
         return storyResponse;
     }
 
+    /*
+     * The total amount of story points in a week should not exceed defined limit.
+     */
     private void checkMaxStoryLimitOfDeveloper(StoryRequest storyRequest) {
         long numberOfDevelopers = developerRepository.count();
         int currentStoryPoints = storyRepository.findAll().stream().filter(s -> (s.getFromDate()
                 .after(storyRequest.getSprintStartDate()) && s.getToDate()
                 .before(storyRequest.getSprintEndDate()))).mapToInt(s -> s.getStoryPoint()).sum();
-        long maxTotalStoryPoints = numberOfDevelopers * 10;
+        long maxTotalStoryPoints = numberOfDevelopers * maxWorkloadPerDeveloper;
         long availableStoryPoints = maxTotalStoryPoints - currentStoryPoints;
         if (storyRequest.getStoryPoint() > availableStoryPoints) {
             throw new WorkOverflowOnSprintPeriodException("Number of Developer : "
@@ -78,14 +88,17 @@ public class StoryServiceImpl implements StoryService {
         return mapper.map(story, StoryResponse.class);
     }
 
+    /*
+     *  One developer can complete 10 story points a week
+     */
     private void checkTotalStoryLimitAgainstNumberOfDevelopers(Long storyId, Long developerId) {
         long sum = storyRepository.findAll().stream().filter(f -> f.getDeveloper() != null
                 && f.getDeveloper().getId() == developerId).mapToInt(s -> s.getStoryPoint()).sum();
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not exist with id : " + storyId));
-        if (sum + story.getStoryPoint() > 10) {
+        if (sum + story.getStoryPoint() > maxWorkloadPerDeveloper) {
             throw new WorkOverflowOnSprintPeriodException("Current sum of story points of a user is : "
-                    + sum + " . Available story points: " + (10 - sum));
+                    + sum + " . Available story points: " + (maxWorkloadPerDeveloper - sum));
         }
     }
 }
