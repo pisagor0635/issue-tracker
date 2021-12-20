@@ -51,7 +51,8 @@ public class StoryServiceImpl implements StoryService {
     }
 
     /*
-     * The total amount of story points in a week should not exceed defined limit.
+     * The total amount of story points in a sprint should not exceed
+     * number of developer times max_work_load_per_developer
      */
     public void checkMaxStoryLimitOfDeveloper(StoryRequest storyRequest) {
         long numberOfDevelopers = developerRepository.count();
@@ -61,7 +62,8 @@ public class StoryServiceImpl implements StoryService {
         long maxTotalStoryPoints = numberOfDevelopers * maxWorkloadPerDeveloper;
         long availableStoryPoints = maxTotalStoryPoints - currentStoryPoints;
 
-        storyServiceUtil.checkAvailabilityOfAssignmentToSprint(storyRequest.getStoryPoint(), availableStoryPoints, numberOfDevelopers);
+        storyServiceUtil.checkAvailabilityOfAssignmentToSprint(storyRequest.getStoryPoint(),
+                availableStoryPoints, numberOfDevelopers, maxWorkloadPerDeveloper);
     }
 
     @Override
@@ -86,15 +88,16 @@ public class StoryServiceImpl implements StoryService {
     }
 
     /*
-     *  One developer can complete 10 story points a week
+     *  One developer can complete 10-story points in a sprint
      */
     private void checkTotalStoryLimitAgainstNumberOfDevelopers(Long storyId, Long developerId) {
         int currentStoryPoints = storyRepository.findAll().stream().filter(f -> f.getDeveloper() != null
-                && f.getDeveloper().getId() == developerId).mapToInt(s -> s.getStoryPoint()).sum();
+                && f.getDeveloper().getId().equals(developerId)).mapToInt(s -> s.getStoryPoint()).sum();
         Story newStory = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not exist with id : " + storyId));
 
-        storyServiceUtil.checkAvailabilityOfAssignmentToDeveloper(currentStoryPoints, newStory.getStoryPoint(), maxWorkloadPerDeveloper);
+        storyServiceUtil.checkAvailabilityOfAssignmentToDeveloper(currentStoryPoints,
+                newStory.getStoryPoint(), maxWorkloadPerDeveloper);
 
     }
 

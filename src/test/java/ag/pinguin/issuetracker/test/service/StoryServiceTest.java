@@ -7,10 +7,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
+@DisplayName("Test of methods in story service")
 public class StoryServiceTest {
 
     private StoryServiceUtil storyServiceUtil;
+    private int maxWorkloadPerDeveloper = 10;
 
     @BeforeEach
     public void setUp() {
@@ -19,8 +20,8 @@ public class StoryServiceTest {
     }
 
     @Test
-    @DisplayName("One developer can complete 10 story points a week")
-    public void testCheckMaxStoryLimitOfDeveloper() {
+    @DisplayName("The total amount of story points in a week should not exceed number_of_developer times 10")
+    public void testCheckTotalStoryLimitAgainstNumberOfDevelopers() {
 
         int newStoryPoint = 5;
         long availableStoryPoints = 4;
@@ -28,25 +29,25 @@ public class StoryServiceTest {
 
         WorkOverflowOnSprintPeriodException exception
                 = Assertions.assertThrows(WorkOverflowOnSprintPeriodException.class,
-                () -> storyServiceUtil.checkAvailabilityOfAssignmentToSprint(newStoryPoint, availableStoryPoints, numberOfDevelopers));
+                () -> storyServiceUtil.checkAvailabilityOfAssignmentToSprint(newStoryPoint, availableStoryPoints, numberOfDevelopers, maxWorkloadPerDeveloper));
 
-        Assertions.assertEquals("Number of Developer : 2 Available story points : 4", exception.getMessage());
+        Assertions.assertEquals("The total amount of story points in a sprint " +
+                "should not exceed number of developer times " + maxWorkloadPerDeveloper, exception.getMessage());
 
     }
 
     @Test
-    @DisplayName("The total amount of story points in a week should not exceed number_of_developer times 10")
-    public void testCheckTotalStoryLimitAgainstNumberOfDevelopers() {
+    @DisplayName("One developer can complete maximum 10 story points a week")
+    public void testCheckMaxStoryLimitOfDeveloper() {
 
         int sum = 8;
         int storyPoint = 3;
-        int maxWorkloadPerDeveloper = 10;
 
         WorkOverflowOnSprintPeriodException exception
                 = Assertions.assertThrows(WorkOverflowOnSprintPeriodException.class,
                 () -> storyServiceUtil.checkAvailabilityOfAssignmentToDeveloper(sum, storyPoint, maxWorkloadPerDeveloper));
 
-        Assertions.assertEquals("Current sum of story points of a user is : 8 . Available story points: 2", exception.getMessage());
+        Assertions.assertEquals("One developer can complete maximum " + maxWorkloadPerDeveloper + "-story points in a sprint", exception.getMessage());
 
     }
 }

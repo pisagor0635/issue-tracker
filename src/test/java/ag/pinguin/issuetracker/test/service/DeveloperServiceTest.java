@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 @DisplayName("Test of developer services")
-public class DeveloperServiceTest {
+class DeveloperServiceTest {
 
     private DeveloperService developerService;
 
@@ -26,7 +26,7 @@ public class DeveloperServiceTest {
 
     @Test
     @DisplayName("Try to remove non-existing developer give expected exception")
-    public void testRemoveNonExistingDeveloper() {
+    void testRemoveNonExistingDeveloper() {
 
         Long nonExistingDeveloperId = -1L;
 
