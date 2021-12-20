@@ -1,8 +1,6 @@
-package test;
+package ag.pinguin.issuetracker.test.service;
 
 import ag.pinguin.issuetracker.exception.ResourceNotFoundException;
-import ag.pinguin.issuetracker.model.DeveloperRequest;
-import ag.pinguin.issuetracker.model.DeveloperResponse;
 import ag.pinguin.issuetracker.repository.DeveloperRepository;
 import ag.pinguin.issuetracker.service.DeveloperService;
 import ag.pinguin.issuetracker.service.impl.DeveloperServiceImpl;
@@ -21,19 +19,6 @@ public class DeveloperServiceTest {
     public void setUp() {
         developerRepository = Mockito.mock(DeveloperRepository.class);
         developerService = new DeveloperServiceImpl(developerRepository);
-
-    }
-
-    @Test
-    public void testAdd() {
-
-        DeveloperRequest developerRequest = new DeveloperRequest();
-        developerRequest.setName("Test");
-
-        DeveloperResponse developerResponse = developerService.add(developerRequest);
-
-        Assertions.assertEquals(developerRequest.getName(), developerResponse.getName());
-
 
     }
 
