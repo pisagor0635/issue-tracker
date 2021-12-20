@@ -19,7 +19,7 @@ public class StoryServiceTest {
     }
 
     @Test
-    @DisplayName("One developer can complete max_work_load_per_developer story points a week")
+    @DisplayName("One developer can complete 10 story points a week")
     public void testCheckMaxStoryLimitOfDeveloper() {
 
         int newStoryPoint = 5;
@@ -36,7 +36,7 @@ public class StoryServiceTest {
     }
 
     @Test
-    @DisplayName("The total amount of story points in a week should not exceed number_of_developer times max_work_load_per_developer")
+    @DisplayName("The total amount of story points in a week should not exceed number_of_developer times 10")
     public void testCheckTotalStoryLimitAgainstNumberOfDevelopers() {
 
         int sum = 8;
